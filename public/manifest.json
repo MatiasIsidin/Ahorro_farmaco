@@ -1,0 +1,63 @@
+{
+  "name": "Ahorro Inteligente en Fármacos Crónicos",
+  "short_name": "Ahorro Fármacos",
+  "description": "Compara precios de medicamentos crónicos y ahorra en farmacias de Chile.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d9488",
+  "orientation": "portrait-primary",
+  "lang": "es-CL",
+  "dir": "ltr",
+  "categories": ["health", "finance"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Comparar precios",
+      "short_name": "Comparar",
+      "url": "/compare",
+      "description": "Buscar y comparar precios de medicamentos",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mis medicamentos",
+      "short_name": "Medicamentos",
+      "url": "/medications",
+      "description": "Ver mis medicamentos activos",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Alertas",
+      "short_name": "Alertas",
+      "url": "/alerts",
+      "description": "Ver alertas de precios y stock",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

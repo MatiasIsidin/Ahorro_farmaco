@@ -1,0 +1,299 @@
+/* AddMedication CSS */
+
+.add-med-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.add-med-header {
+  margin-bottom: var(--space-4);
+}
+
+.add-med-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.add-med-container {
+  min-height: 400px;
+  position: relative;
+}
+
+.add-med-upload-card {
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-med-upload-area {
+  width: 100%;
+  max-width: 500px;
+  border: 2px dashed var(--color-primary-200);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-12) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-50);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.add-med-upload-area:hover {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.add-med-upload-area h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-800);
+}
+
+.add-med-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+}
+
+.add-med-processing h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.add-med-review {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-med-edit-card {
+  margin-bottom: var(--space-4);
+  transition: opacity var(--transition-fast);
+}
+
+.add-med-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.add-med-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.add-med-success {
+  padding: var(--space-12) var(--space-8);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+@keyframes progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .add-med-edit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+[data-senior-mode='true'] .add-med-upload-area h3 {
+  font-size: var(--font-size-2xl);
+}
+
+[data-senior-mode='true'] .add-med-edit-header strong {
+  font-size: var(--font-size-lg);
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--color-muted);
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-3);
+  padding-left: var(--space-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+.manual-result-card {
+  padding: var(--space-3);
+  cursor: default;
+}
+
+/* ── Confidence badges ──────────────────────────────────────── */
+
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.confidence-high {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.confidence-medium {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.confidence-low {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+/* ── OCR debug info ─────────────────────────────────────────── */
+
+.ocr-debug-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 8px);
+}
+
+.ocr-debug-info code {
+  background: var(--color-bg-secondary, #f3f4f6);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+
+/* ── Low confidence warning ─────────────────────────────────── */
+
+.low-confidence-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md, 8px);
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+
+.needs-review {
+  border-left: 4px solid #f59e0b;
+}
+
+/* ── OCR Traceability Panel ─────────────────────────────────── */
+.ocr-traceability-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: inherit;
+}
+
+.trace-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1e293b;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.trace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.trace-code {
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: #334155;
+  margin-top: 4px;
+  min-height: 24px;
+  white-space: pre-wrap;
+}
+
+.trace-candidates {
+  font-size: 0.8rem;
+}
+
+.trace-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4px;
+}
+
+.trace-table th, .trace-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.trace-table th {
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.trace-table td {
+  font-size: 0.78rem;
+}
+
+.cand-high td {
+  background: rgba(16, 185, 129, 0.05);
+  color: #047857;
+  font-weight: 500;
+}
+
+.cand-med td {
+  background: rgba(245, 158, 11, 0.05);
+  color: #b45309;
+}
+
+.trace-selection {
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 8px;
+  font-size: 0.8rem;
+}
+
+

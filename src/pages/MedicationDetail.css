@@ -1,0 +1,216 @@
+/* MedicationDetail CSS */
+
+.med-detail-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.med-detail-hero {
+  padding: var(--space-6);
+  background: linear-gradient(to right, white, var(--color-primary-50));
+}
+
+.med-detail-hero-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.med-detail-icon {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-primary-100);
+  flex-shrink: 0;
+}
+
+.med-detail-info {
+  flex: 1;
+}
+
+.med-detail-info h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.med-detail-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.med-detail-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.med-detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.med-detail-section {
+  padding: var(--space-6);
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.price-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+}
+
+.price-item.best-price {
+  background: white;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-100);
+}
+
+.bio-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.refill-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  color: white;
+}
+
+.refill-normal { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); }
+.refill-warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.refill-urgente { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+
+/* Price History Chart */
+.price-history-chart {
+  padding: var(--space-4) 0;
+}
+
+.price-history-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 180px;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.price-history-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.price-history-value {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.price-history-bar {
+  width: 28px;
+  background: var(--color-primary);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.8s ease;
+  min-height: 4px;
+}
+
+.price-history-bar.bar-lowest {
+  background: var(--color-accent);
+}
+
+.price-history-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.tracking-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.tracking-stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.stat-val {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .med-detail-hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .med-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .med-detail-hero-actions {
+    width: 100%;
+  }
+  .med-detail-hero-actions .btn {
+    width: 100%;
+  }
+}
+
+[data-senior-mode='true'] .med-detail-info h2 {
+  font-size: 2.5rem;
+}

@@ -1,0 +1,128 @@
+/* Savings CSS */
+
+.savings-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.savings-header {
+  margin-bottom: var(--space-6);
+}
+
+.savings-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.savings-hero-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-8);
+  background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+  border: 1px solid var(--color-primary-200);
+}
+
+.savings-hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.savings-hero-label {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary-800);
+  font-weight: var(--font-weight-semibold);
+}
+
+.savings-hero-value {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.savings-section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+  color: var(--color-text);
+}
+
+.savings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-5);
+}
+
+.savings-benefit-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.savings-benefit-card.highlight {
+  border: 2px solid var(--color-accent);
+  background: linear-gradient(to bottom right, white, #f0fdf4);
+}
+
+.savings-benefit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.savings-benefit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.savings-benefit-discount {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+.savings-benefit-card.highlight .savings-benefit-discount {
+  color: var(--color-accent-dark);
+}
+
+.savings-benefit-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.savings-benefit-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  flex: 1;
+}
+
+.savings-benefit-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 768px) {
+  .savings-hero-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-6);
+  }
+}
+
+[data-senior-mode='true'] .savings-benefit-title {
+  font-size: var(--font-size-xl);
+}
