@@ -39,7 +39,6 @@ export default function Welcome() {
         const { error: signUpError } = await supabase.auth.signUp({ email, password });
         if (signUpError) throw signUpError;
         track('auth_signup_success');
-        alert('Registro exitoso. Revisa tu correo (si la confirmación está activa) o inicia sesión.');
         setIsLogin(true);
       }
     } catch (err) {

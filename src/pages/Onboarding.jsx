@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Check, ShieldCheck } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { COMUNAS, PATOLOGIAS, RANGOS_EDAD, TIPOS_PERFIL, MEDICATIONS_CATALOG as MOCK_CATALOG } from '../data/mockData';
-import { calculateMonthlyExpense, calculateTotalSavingsPotential, formatCLP, getMedicationCatalog } from '../services/savingsEngine';
+import { getMedicationCatalog } from '../services/savingsEngine';
 import './Onboarding.css';
 
-const STEPS = ['perfil', 'ubicacion', 'salud', 'consentimiento', 'resumen'];
+const STEPS = ['perfil', 'ubicacion', 'salud', 'consentimiento'];
 
 export default function Onboarding() {
   const { dispatch } = useApp();
@@ -98,29 +98,6 @@ export default function Onboarding() {
     });
 
     navigate('/dashboard');
-  };
-
-  // Compute estimated savings for summary
-  const getEstimates = () => {
-    // Usar catálogo live con fallback al mock estático
-    const liveCatalog = getMedicationCatalog();
-    const catalog = liveCatalog.length > 0 ? liveCatalog : MOCK_CATALOG;
-    const mockMeds = [];
-    for (const patId of form.patologias) {
-      const pat = PATOLOGIAS.find((p) => p.id === patId);
-      if (pat) {
-        pat.medicamentosRelacionados.forEach((medId) => {
-          if (!mockMeds.find((m) => m.catalogId === medId)) {
-            mockMeds.push({ catalogId: medId, deleted: false });
-          }
-        });
-      }
-    }
-    return {
-      gastoMensual: calculateMonthlyExpense(mockMeds),
-      ahorroPotencial: calculateTotalSavingsPotential(mockMeds),
-      medicamentos: mockMeds.length,
-    };
   };
 
   const canProceed = () => {
@@ -281,51 +258,6 @@ export default function Onboarding() {
           </div>
         )}
 
-        {/* Step 4: Summary */}
-        {currentStep === 'resumen' && (() => {
-          const est = getEstimates();
-          return (
-            <div className="onboarding-step">
-              <h2>🎯 Tu diagnóstico inicial</h2>
-              <p className="onboarding-desc">Basado en tu información, esto es lo que encontramos:</p>
-
-              <div className="onboarding-summary-cards">
-                <div className="card card-accent">
-                  <div className="stat-card">
-                    <span className="stat-label">Gasto mensual estimado</span>
-                    <span className="stat-value">{formatCLP(est.gastoMensual)}</span>
-                  </div>
-                </div>
-                <div className="card card-savings">
-                  <div className="stat-card">
-                    <span className="stat-label">Ahorro potencial mensual</span>
-                    <span className="stat-value stat-value-accent">{formatCLP(est.ahorroPotencial)}</span>
-                  </div>
-                </div>
-                <div className="card">
-                  <div className="stat-card">
-                    <span className="stat-label">Medicamentos detectados</span>
-                    <span className="stat-value">{est.medicamentos}</span>
-                  </div>
-                </div>
-                <div className="card">
-                  <div className="stat-card">
-                    <span className="stat-label">Ahorro anual proyectado</span>
-                    <span className="stat-value stat-value-accent">{formatCLP(est.ahorroPotencial * 12)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="alert-banner alert-banner-success mt-6">
-                <span>🎉</span>
-                <span>
-                  <strong>¡Buenas noticias!</strong> Podrías ahorrar hasta{' '}
-                  <strong>{formatCLP(est.ahorroPotencial * 12)}</strong> al año en medicamentos.
-                </span>
-              </div>
-            </div>
-          );
-        })()}
       </div>
 
       {/* Navigation */}
