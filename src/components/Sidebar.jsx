@@ -9,7 +9,7 @@ import {
   PiggyBank, FileText, Settings, Crown, TrendingUp, Calendar,
   User, Menu, X, Heart, LogOut
 } from 'lucide-react';
-import { useApp, useActiveProfile } from '../context/AppContext';
+import { useApp, useActiveProfile, useActiveAlerts } from '../context/AppContext';
 import { formatCLP, calculateAccumulatedSavings } from '../services/savingsEngine';
 import './Sidebar.css';
 
@@ -35,7 +35,7 @@ export default function Sidebar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const totalSavings = calculateAccumulatedSavings(state.purchases);
-  const activeAlerts = state.alerts.filter((a) => a.activa && !a.leida).length;
+  const activeAlerts = useActiveAlerts().length;
 
   const handleLogout = async () => {
     if (window.confirm('¿Estás seguro de que deseas cerrar sesión?')) {

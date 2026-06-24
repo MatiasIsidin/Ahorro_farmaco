@@ -4,7 +4,7 @@
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Bell, ChevronDown, Search } from 'lucide-react';
-import { useApp, useActiveProfile } from '../context/AppContext';
+import { useApp, useActiveProfile, useActiveAlerts } from '../context/AppContext';
 import './Topbar.css';
 
 const PAGE_TITLES = {
@@ -30,7 +30,8 @@ export default function Topbar() {
   const location = useLocation();
 
   const title = PAGE_TITLES[location.pathname] || 'Ahorro Inteligente';
-  const unreadAlerts = state.alerts.filter((a) => a.activa && !a.leida).length;
+  const alerts = useActiveAlerts();
+  const unreadAlerts = alerts.length;
 
   return (
     <header className="app-topbar">

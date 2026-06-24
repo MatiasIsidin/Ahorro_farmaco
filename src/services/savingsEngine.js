@@ -200,38 +200,18 @@ export function getPriceHistory(medicationCatalogId) {
   return PRICE_HISTORY[medicationCatalogId] || [];
 }
 
-// ── Generar alertas automáticas ──────────────────────────────
-
-export function generateAutoAlerts(userMedications) {
+export function generateSmartAlerts(userMedications) {
   const alerts = [];
   const hoy = new Date();
 
   userMedications.forEach((med) => {
-    if (!med.alertasActivas) return;
+    if (med.deleted) return;
 
-    const currentBest = findBestPrice(med.catalogId);
-    const historicalAvg = getAverageHistoricalPrice(med.catalogId);
-
-    // Alerta 1: Quiebre de stock
-    if (!currentBest) {
-      alerts.push({
-        catalogId: med.catalogId,
-        tipo: 'QUIEBRE_STOCK',
-        mensaje: `No hay stock disponible actualmente para ${med.nombre}. Te avisaremos cuando vuelva.`,
-      });
-      return; // No calculamos precios si no hay stock
-    }
-
-    // Alerta 2: Baja de precio significativa vs promedio histórico
-    if (historicalAvg > 0 && currentBest.precio < historicalAvg * 0.8) {
-      alerts.push({
-        catalogId: med.catalogId,
-        tipo: 'BAJA_PRECIO',
-        mensaje: `${med.nombre} bajó a ${formatCLP(currentBest.precio)} en ${currentBest.farmacia.nombre} (20% bajo el promedio).`,
-      });
-    }
-
-    // Alerta 3: Próxima compra (Simulada basada en fecha última compra y cantidad)
+    const catalogMed = getCatalogMedication(med.catalogId);
+    const nombreMed = med.nombre || catalogMed?.nombre || med.catalogId;
+    
+    // 1. Calcular Días Restantes
+    let diasRestantes = null;
     if (med.ultimaCompra && med.cantidadComprada) {
       const ultima = new Date(med.ultimaCompra);
       const diasPasados = Math.floor((hoy - ultima) / (1000 * 60 * 60 * 24));
@@ -241,19 +221,103 @@ export function generateAutoAlerts(userMedications) {
       if (med.frecuencia?.toLowerCase().includes('cada 8')) pastillasPorDia = 3;
       
       const diasCobertura = Math.floor(med.cantidadComprada / pastillasPorDia);
-      const diasRestantes = diasCobertura - diasPasados;
+      diasRestantes = diasCobertura - diasPasados;
+    }
 
-      if (diasRestantes <= 5 && diasRestantes >= 0) {
+    // 2. Precios
+    const currentBest = findBestPrice(med.catalogId);
+    const historicalAvg = getAverageHistoricalPrice(med.catalogId);
+    const currentWorst = findHighestPrice(med.catalogId);
+    const savingsPot = calculateSavingsPotential(med.catalogId);
+
+    // --- EVALUAR REGLAS CRÍTICAS (100 - 75) ---
+
+    // MEDICAMENTO_AGOTADO (Score 100)
+    if (diasRestantes !== null && diasRestantes < 0) {
+      alerts.push({
+        id: `agotado-${med.id}`,
+        medicamento: nombreMed,
+        catalogId: med.catalogId,
+        tipo: 'MEDICAMENTO_AGOTADO',
+        categoria: 'CRITICA',
+        score: 100,
+        mensaje: `Tu stock se agotó hace ${Math.abs(diasRestantes)} días. Es vital que repongas tu tratamiento.`,
+        accion: 'Comprar de inmediato',
+        precioSugerido: currentBest?.precio,
+      });
+      // Evitar generar "próxima compra" si ya está agotado
+    } 
+    // PROXIMA_COMPRA (Score 90 / 80)
+    else if (diasRestantes !== null && diasRestantes <= 7) {
+      const score = diasRestantes <= 3 ? 90 : 80;
+      alerts.push({
+        id: `compra-${med.id}`,
+        medicamento: nombreMed,
+        catalogId: med.catalogId,
+        tipo: 'PROXIMA_COMPRA',
+        categoria: diasRestantes <= 3 ? 'CRITICA' : 'IMPORTANTE',
+        score: score,
+        mensaje: `Te quedan ${diasRestantes === 0 ? 'solo para hoy' : `pastillas para ${diasRestantes} días`}. Anticípate y compra ahora.`,
+        accion: 'Ver opciones',
+        precioSugerido: currentBest?.precio,
+      });
+    }
+
+    // QUIEBRE_STOCK (Score 75)
+    if (!currentBest) {
+      alerts.push({
+        id: `quiebre-${med.id}`,
+        medicamento: nombreMed,
+        catalogId: med.catalogId,
+        tipo: 'QUIEBRE_STOCK',
+        categoria: 'CRITICA',
+        score: 75,
+        mensaje: `Actualmente no hay stock disponible en el mercado. Consulta con tu médico por alternativas.`,
+        accion: 'Ver alternativas',
+      });
+      return; // Si no hay stock, no evaluamos ahorros ni bioequivalentes
+    }
+
+    // --- EVALUAR REGLAS IMPORTANTES / INFORMATIVAS (60 - 40) ---
+    
+    // AHORRO_SIGNIFICATIVO (Score 60)
+    // Generar solo si el ahorro es >= $3.000 o >= 20%
+    if (savingsPot.ahorro >= 3000 || savingsPot.porcentaje >= 20) {
+      alerts.push({
+        id: `ahorro-${med.id}`,
+        medicamento: nombreMed,
+        catalogId: med.catalogId,
+        tipo: 'AHORRO_SIGNIFICATIVO',
+        categoria: 'IMPORTANTE',
+        score: 60,
+        mensaje: `Puedes ahorrar ${formatCLP(savingsPot.ahorro)} comprando en ${currentBest.farmacia.nombre} vs otras opciones.`,
+        accion: 'Aprovechar',
+        ahorro: savingsPot.ahorro,
+      });
+    }
+
+    // BIOEQUIVALENTE_DISPONIBLE (Score 40)
+    const bioAlts = getBioequivalentSavings(med.catalogId);
+    if (bioAlts.length > 0) {
+      // Tomamos la mejor alternativa
+      const bestAlt = bioAlts[0];
+      if (bestAlt.ahorro >= 3000 || bestAlt.porcentajeAhorro >= 20) {
         alerts.push({
+          id: `bio-${med.id}`,
+          medicamento: nombreMed,
           catalogId: med.catalogId,
-          tipo: 'PROXIMA_COMPRA',
-          mensaje: `Te quedan ${diasRestantes} días de ${med.nombre}. Sugerimos comprar pronto en ${currentBest.farmacia.nombre} a ${formatCLP(currentBest.precio)}.`,
+          tipo: 'BIOEQUIVALENTE_DISPONIBLE',
+          categoria: 'INFORMATIVA',
+          score: 40,
+          mensaje: `Existe un bioequivalente certificado (${bestAlt.medicamento.nombre}) que te ahorra ${formatCLP(bestAlt.ahorro)}.`,
+          accion: 'Ver equivalencia',
         });
       }
     }
   });
 
-  return alerts;
+  // Ordenar por score descendente y retornar
+  return alerts.sort((a, b) => b.score - a.score);
 }
 
 // ── Smart Cart / Carrito Inteligente ─────────────────────────

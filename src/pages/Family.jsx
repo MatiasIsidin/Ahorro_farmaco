@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { Users, Plus, Edit2, Trash2, Heart, ShieldAlert } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCLP, calculateFamilySavings } from '../services/savingsEngine';
+import { formatCLP, calculateFamilySavings, generateSmartAlerts } from '../services/savingsEngine';
 import { TIPOS_PERFIL, RANGOS_EDAD, COMUNAS } from '../data/mockData';
 import './Family.css';
 
@@ -122,7 +122,7 @@ export default function Family() {
       <div className="family-grid mt-6 stagger-children">
         {state.profiles.map((p) => {
           const profileMeds = state.medications.filter(m => m.profileId === p.id && !m.deleted);
-          const profileAlerts = state.alerts.filter(a => a.profileId === p.id && a.activa);
+          const profileAlerts = generateSmartAlerts(profileMeds);
           const isActive = state.activeProfileId === p.id;
 
           return (

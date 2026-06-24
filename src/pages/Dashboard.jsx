@@ -153,23 +153,37 @@ export default function Dashboard() {
           </div>
           {alerts.length > 0 ? (
             <div className="dashboard-alerts stagger-children">
-              {alerts.slice(0, 4).map((alert, i) => (
-                <div key={i} className={`dashboard-alert dashboard-alert-${alert.tipo === 'QUIEBRE_STOCK' ? 'danger' : alert.tipo === 'BAJA_PRECIO' ? 'success' : 'warning'}`}>
-                  <div className="dashboard-alert-icon">
-                    {alert.tipo === 'QUIEBRE_STOCK' ? <AlertTriangle size={16} /> :
-                     alert.tipo === 'BAJA_PRECIO' ? <TrendingDown size={16} /> :
-                     <Bell size={16} />}
+              {alerts.slice(0, 3).map((alert, i) => {
+                let badgeClass = 'warning';
+                let icon = <Bell size={16} />;
+                
+                if (alert.categoria === 'CRITICA') {
+                  badgeClass = 'danger';
+                  icon = <AlertTriangle size={16} />;
+                } else if (alert.categoria === 'INFORMATIVA') {
+                  badgeClass = 'success';
+                  icon = <TrendingDown size={16} />;
+                }
+
+                return (
+                  <div key={alert.id || i} className={`dashboard-alert dashboard-alert-${badgeClass}`}>
+                    <div className="dashboard-alert-icon">
+                      {icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div className="flex justify-between items-start">
+                        <strong>{alert.medicamento}</strong>
+                        <span className={`badge badge-${badgeClass}`} style={{ fontSize: '10px', padding: '2px 6px' }}>{alert.categoria}</span>
+                      </div>
+                      <p className="mt-1">{alert.mensaje}</p>
+                    </div>
                   </div>
-                  <div>
-                    <strong>{alert.medicamento}</strong>
-                    <p>{alert.mensaje}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-muted" style={{ padding: 'var(--space-4)' }}>
-              Sin alertas activas. Todo está bajo control. ✅
+              Sin alertas críticas. Todo está bajo control. ✅
             </p>
           )}
         </div>

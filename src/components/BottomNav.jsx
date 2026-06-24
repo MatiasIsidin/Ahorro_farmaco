@@ -4,7 +4,7 @@
 
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Pill, GitCompare, Bell, PiggyBank } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useActiveAlerts } from '../context/AppContext';
 import './BottomNav.css';
 
 const BOTTOM_ITEMS = [
@@ -16,8 +16,7 @@ const BOTTOM_ITEMS = [
 ];
 
 export default function BottomNav() {
-  const { state } = useApp();
-  const unreadAlerts = state.alerts.filter((a) => a.activa && !a.leida).length;
+  const unreadAlerts = useActiveAlerts().length;
 
   return (
     <nav className="app-bottom-nav" aria-label="Navegación principal">

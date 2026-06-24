@@ -5,7 +5,7 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
 import * as storage from '../services/storageService';
 import { supabase } from '../lib/supabaseClient';
-import { generateAutoAlerts, initSavingsEngine } from '../services/savingsEngine';
+import { initSavingsEngine } from '../services/savingsEngine';
 import { logger, setLoggerContext } from '../lib/logger';
 import { toast } from '../lib/toast';
 import { setAnalyticsUser, track } from '../lib/analytics';
@@ -134,13 +134,7 @@ function appReducer(state, action) {
     case 'SET_RECIPES': {
       return { ...state, recipes: action.payload };
     }
-    case 'UPDATE_ALERT': {
-      const alerts = state.alerts.map(a => a.id === action.payload.id ? { ...a, ...action.payload.updates } : a);
-      return { ...state, alerts };
-    }
-    case 'SET_ALERTS': {
-      return { ...state, alerts: action.payload };
-    }
+    // UPDATE_ALERT and SET_ALERTS removed — alerts are now ephemeral (calculated on-the-fly)
     case 'ADD_TO_CART': {
       return { ...state, cart: [...state.cart, action.payload] };
     }
@@ -398,34 +392,9 @@ export function AppProvider({ children }) {
     document.documentElement.setAttribute('data-senior-mode', state.settings.seniorMode ? 'true' : 'false');
   }, [state.settings.seniorMode]);
 
-  // Generate auto alerts on medication changes (no incluir state.alerts en deps para evitar loop)
-  useEffect(() => {
-    if (state.isLoadingData) return;
-    if (state.medications.length === 0) return;
-
-    const activeMeds = state.medications.filter((m) => !m.deleted);
-    const autoAlerts = generateAutoAlerts(activeMeds);
-    if (autoAlerts.length === 0) return;
-
-    // Snapshot de alertas existentes para comparar sin re-trigger
-    const existingTypes = new Set(state.alerts.map((a) => `${a.tipo}_${a.catalogId}`));
-    const newAlerts = autoAlerts.filter(
-      (a) => !existingTypes.has(`${a.tipo}_${a.catalogId}`)
-    );
-    if (newAlerts.length === 0) return;
-
-    const merged = [...state.alerts, ...newAlerts.map((a) => ({
-      ...a,
-      id: crypto.randomUUID(),
-      profileId: state.activeProfileId,
-      leida: false,
-      activa: true,
-    }))];
-    storage.saveAlerts(merged);
-    dispatchRaw({ type: 'SET_ALERTS', payload: merged });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.medications, state.isLoadingData, state.activeProfileId]);
-
+  // Remove the old generateAutoAlerts useEffect entirely (lines 386-412 approximately)
+  // It is no longer needed since alerts are ephemeral and calculated on the fly.
+  
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {children}
@@ -455,11 +424,15 @@ export function useActiveMedications() {
   );
 }
 
+import { generateSmartAlerts } from '../services/savingsEngine';
+
 export function useActiveAlerts() {
   const { state } = useApp();
-  return state.alerts.filter(
-    (a) => a.profileId === state.activeProfileId && a.activa
+  const activeMeds = state.medications.filter(
+    (m) => m.profileId === state.activeProfileId && !m.deleted
   );
+  // Calculate ephemeral alerts on the fly based on current state
+  return generateSmartAlerts(activeMeds);
 }
 
 export function useIsPremium() {
