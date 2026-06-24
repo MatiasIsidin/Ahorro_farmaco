@@ -3,7 +3,34 @@
 .welcome-page {
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
 }
+
+.welcome-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 10;
+}
+
+.welcome-header .btn-login {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.welcome-header .btn-login:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 
 .welcome-hero {
   position: relative;

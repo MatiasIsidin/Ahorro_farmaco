@@ -300,11 +300,32 @@ export function AppProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) {
-        dispatchRaw({ type: 'SET_AUTH', payload: session?.user || null });
-      }
+    // Timeout de 3 segundos para evitar que la app se quede colgada si Supabase no responde
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Supabase getSession timeout')), 3000);
     });
+
+    Promise.race([
+      supabase.auth.getSession(),
+      timeoutPromise
+    ])
+      .then((result) => {
+        // En caso de que result sea la sesión de supabase
+        if (mounted && result && result.data) {
+          dispatchRaw({ type: 'SET_AUTH', payload: result.data.session?.user || null });
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking auth session:", error);
+        if (mounted) {
+          dispatchRaw({ type: 'SET_AUTH', payload: null });
+          // Solo mostrar toast si no es simplemente que no hay sesión, 
+          // sino un error real de red o timeout
+          if (error.message !== 'Auth session missing!') {
+            toast.error("Conexión lenta o sin red. Iniciando modo offline.");
+          }
+        }
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
